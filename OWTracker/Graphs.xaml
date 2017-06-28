@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="OWTracker.Graphs"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:oxy="http://oxyplot.org/wpf"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:OWTracker"
+             FontFamily="{StaticResource Futura}"
+             FontSize="18"
+             mc:Ignorable="d" Width="1246" Height="628">
+    <Grid>
+        <oxy:PlotView x:Name="Chart" Margin="10,63,10,10" Background="Transparent">
+            <oxy:PlotView.DefaultTrackerTemplate>
+                <ControlTemplate>
+                    <Canvas>
+                        <Grid>
+                            <Border Background="{DynamicResource OverwatchBlue}" Padding="5">
+                                <TextBlock Text="{Binding}" Foreground="White"/>
+                            </Border>
+                        </Grid>
+                    </Canvas>
+                </ControlTemplate>
+            </oxy:PlotView.DefaultTrackerTemplate>
+        </oxy:PlotView>
+        <local:MultiSelectComboBox x:Name="SeasonSelect" AllText="ALL GAMES" DefaultText="--NO SEASON--" MouseRightButtonUp="ComboBox_RightButtonUp" SelectedItemsChanged="SeasonSelect_SelectionChanged" HorizontalAlignment="Left" Margin="395,30,0,0" VerticalAlignment="Top" Width="200" />
+        <ComboBox x:Name="ChartType" MouseRightButtonUp="ComboBox_RightButtonUp" SelectionChanged="ChartType_SelectionChanged" HorizontalAlignment="Left" Margin="190,31,0,0" VerticalAlignment="Top" Width="200" SelectedIndex="0">
+            <sys:String>SKILL RATING</sys:String>
+            <sys:String>WIN STREAK</sys:String>
+            <sys:String>WIN RATE</sys:String>
+            <sys:String>RESULTS PER DAY</sys:String>
+            <sys:String>RESULTS PER MAP</sys:String>
+            <sys:String>RESULTS PER HERO</sys:String>
+        </ComboBox>
+        <TextBlock Margin="10,0,1057,0" TextWrapping="Wrap" Text="GRAPHS" VerticalAlignment="Top" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="64" Height="58" />
+        <local:MultiSelectComboBox x:Name="MapSelect" AllText="ALL MAPS" DefaultText="--NO MAP--" MouseRightButtonUp="ComboBox_RightButtonUp" SelectedItemsChanged="MapSelect_SelectionChanged" HorizontalAlignment="Left" Margin="600,30,0,0" VerticalAlignment="Top" Width="200" />
+        <local:MultiSelectComboBox x:Name="HeroSelect" AllText="ALL HEROES" DefaultText="--NO HEROES--" MouseRightButtonUp="ComboBox_RightButtonUp" SelectedItemsChanged="HeroSelect_SelectionChanged" HorizontalAlignment="Left" Margin="805,30,0,0" VerticalAlignment="Top" Width="200" />
+    </Grid>
+</UserControl>

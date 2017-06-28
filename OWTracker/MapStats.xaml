@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="OWTracker.MapStats"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:OWTracker"
+             mc:Ignorable="d"
+             FontFamily="{StaticResource Futura}"
+             FontSize="20"
+             Width="1246" Height="628">
+    <Grid />
+</UserControl>

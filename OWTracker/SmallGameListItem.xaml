@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="OWTracker.SmallGameListItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:OWTracker"
+             mc:Ignorable="d" Height="40.798" Width="380">
+    <Grid>
+        <Image x:Name="RankIcon" HorizontalAlignment="Left" Width="41" Source="pack://siteoforigin:,,,/Resources/platinum.png" />
+        <TextBlock x:Name="CurrentRank" Margin="39,-2,0,-3" TextWrapping="Wrap" Text="2500" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="42" Foreground="White" HorizontalAlignment="Left" Width="72" />
+        <TextBlock x:Name="RankChange" Margin="103,16,0,4" TextWrapping="Wrap" Text="(+1234)" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="22" Foreground="White" HorizontalAlignment="Left" FontStyle="Italic" Width="62" />
+        <TextBlock x:Name="Date" Margin="0,3,10,0" TextWrapping="Wrap" Text="SEASON 4 - DEC 3" Width="188" FontSize="16" Foreground="#FFA9AEB8" HorizontalAlignment="Right" TextAlignment="Right" Height="24" VerticalAlignment="Top" FontFamily="{DynamicResource Futura}" />
+        <TextBlock x:Name="Map" HorizontalAlignment="Right" Margin="0,0,10,4" TextWrapping="Wrap" Text="WATCHPOINT: GIBRALTAR" Width="188" FontSize="15" Foreground="#FFDDE0E8" Height="17" VerticalAlignment="Bottom" TextAlignment="Right" FontFamily="{DynamicResource Futura}" />
+        <TextBlock x:Name="SRText" Text="SR" HorizontalAlignment="Left" Margin="108,3,0,0" VerticalAlignment="Top" Foreground="#FFDD2CFF" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="18" Height="17" RenderTransformOrigin="-0.1,0.5" Width="17" />
+    </Grid>
+</UserControl>
