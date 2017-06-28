@@ -5,7 +5,7 @@
 #define MyAppVersion "1.0.0.0"
 #define MyAppPublisher "Aaron Opell"
 #define MyAppURL "http://aopell.me"
-#define MyAppExeName "OWTracker.exe"
+#define MyAppExeName "OWTrackerJson.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -19,7 +19,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\OverwatchTracker
+DefaultDirName={pf}\OverwatchTrackerJson
 DisableProgramGroupPage=yes
 OutputBaseFilename=OverwatchTrackerInstaller
 SetupIconFile=D:\Aaron\Pictures\Icons\ow.ico
