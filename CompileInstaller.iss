@@ -5,13 +5,13 @@
 #define MyAppVersion "1.0.0.0"
 #define MyAppPublisher "Aaron Opell"
 #define MyAppURL "http://aopell.me"
-#define MyAppExeName "OWTrackerJson.exe"
+#define MyAppExeName "OWTracker.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{E793A231-D825-49C2-8E6E-4D029BF47FB2}
+AppId={{253D6FF3-F8CC-45B2-A341-55AACE050570}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}
@@ -22,10 +22,9 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\OverwatchTrackerJson
 DisableProgramGroupPage=yes
 OutputBaseFilename=OverwatchTrackerInstaller
-SetupIconFile=D:\Aaron\Pictures\Icons\ow.ico
+SetupIconFile=D:\aaron\Pictures\Icons\ow.ico
 Compression=lzma
 SolidCompression=yes
-VersionInfoVersion={#MyAppVersion}
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -43,5 +42,5 @@ Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 

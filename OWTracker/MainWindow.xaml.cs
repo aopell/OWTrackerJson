@@ -87,8 +87,6 @@ namespace OWTracker
                         // If update check failed, proceed without error
                     }
                 }
-
-                await Config.DataSource.GetReadOnlyUserInfoAsync("-"); // First API connection is slow, so doing one on startup to improve UX
             }
         }
 
