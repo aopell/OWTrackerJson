@@ -73,17 +73,17 @@
                             </Setter>
                         </Style>
                     </TabControl.Resources>
-                    <TabItem Header="OVERVIEW" x:Name="OverviewTab" />
-                    <TabItem Header="VIEW GAMES" x:Name="AllGamesTab" />
+                    <TabItem Header="OVERVIEW" x:Name="OverviewTab" TabIndex="0" />
+                    <TabItem Header="VIEW GAMES" x:Name="AllGamesTab" TabIndex="1" />
                     <TabItem Header="MAPS" x:Name="MapsTab" Visibility="Collapsed" />
                     <TabItem Header="HEROES" x:Name="HeroesTab" Visibility="Collapsed" />
-                    <TabItem Header="GRAPHS" x:Name="GraphsTab" />
-                    <TabItem Header="SETTINGS" x:Name="SettingsTab" />
+                    <TabItem Header="GRAPHS" x:Name="GraphsTab" TabIndex="2" />
+                    <TabItem Header="SETTINGS" x:Name="SettingsTab" TabIndex="3" />
                 </TabControl>
-                <Button Content="⬅" Click="Logout_Click" ToolTip="Log Out" FontSize="28" Style="{StaticResource BlueOnHover}" Foreground="White" BorderBrush="{x:Null}" Height="42" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="42" BorderThickness="0" />
-                <Button Content="⟳" Click="Refresh_Click" ToolTip="Refresh" FontSize="28" Style="{StaticResource BlueOnHover}" Foreground="White" BorderBrush="{x:Null}" Height="41" Margin="0,10,57,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="42" BorderThickness="0" />
-                <Button x:Name="AddGameButton" Content="+" ToolTip="Add Game" Click="AddGame_Click" FontSize="28" Style="{StaticResource BlueOnHover}" Foreground="White" BorderBrush="{x:Null}" Height="42" Margin="0,10,99,0" VerticalAlignment="Top" BorderThickness="0" HorizontalAlignment="Right" Width="42" />
-                <Button x:Name="SkillRatingDecayButton" Visibility="Hidden" Content="▼" ToolTip="Skill Rating Decay" Click="SkillRatingDecayButton_Click" FontSize="18" Style="{StaticResource BlueOnHover}" Foreground="White" BorderBrush="{x:Null}" Height="41" Margin="0,10,141,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="42" BorderThickness="0" />
+                <Button Content="⬅" Click="Logout_Click" ToolTip="Log Out" FontSize="28" Style="{StaticResource BlueOnHover}" Foreground="White" BorderBrush="{x:Null}" Height="42" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="42" BorderThickness="0" TabIndex="7" />
+                <Button Content="⟳" Click="Refresh_Click" ToolTip="Refresh" FontSize="28" Style="{StaticResource BlueOnHover}" Foreground="White" BorderBrush="{x:Null}" Height="41" Margin="0,10,57,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="42" BorderThickness="0" TabIndex="6" />
+                <Button x:Name="AddGameButton" Content="+" ToolTip="Add Game" Click="AddGame_Click" FontSize="28" Style="{StaticResource BlueOnHover}" Foreground="White" BorderBrush="{x:Null}" Height="42" Margin="0,10,99,0" VerticalAlignment="Top" BorderThickness="0" HorizontalAlignment="Right" Width="42" TabIndex="5" />
+                <Button x:Name="SkillRatingDecayButton" Visibility="Hidden" Content="▼" ToolTip="Skill Rating Decay" Click="SkillRatingDecayButton_Click" FontSize="18" Style="{StaticResource BlueOnHover}" Foreground="White" BorderBrush="{x:Null}" Height="41" Margin="0,10,141,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="42" BorderThickness="0" TabIndex="4" />
                 <TextBlock x:Name="StatusText" Margin="0,22,188,0" TextWrapping="Wrap" TextAlignment="Right" HorizontalAlignment="Right" Width="267" Foreground="White" Height="18" VerticalAlignment="Top"/>
             </Grid>
         </Viewbox>

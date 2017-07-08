@@ -26,8 +26,8 @@ namespace OWTracker
         static Config()
         {
             DataSource = new JsonDataProvider(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\{Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title}");
-            UpdateUrl = "http://aopell.me/projects/owjv.txt";
             ChangelogUrl = "http://aopell.me/projects/OWTrackerJsonChangelog.html";
+            UpdateUrl = "http://aopell.me/projects/owjv.txt";
             LocalDataSource = DataSource.GetType().GetCustomAttributes(typeof(LocalDataProviderAttribute), false).Length > 0;
         }
 

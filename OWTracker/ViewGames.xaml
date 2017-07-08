@@ -28,7 +28,7 @@
                 </Grid.ColumnDefinitions>
                 <GroupBox Header="FILTER" Margin="6,67,6,0">
                     <Grid Margin="0,0,-2.4,-2">
-                        <Button x:Name="ClearAllButton" Click="ClearAllButton_Click" Content="CLEAR FILTERS" Margin="7,0,8.4,10" Height="30" VerticalAlignment="Bottom" TabIndex="10" />
+                        <Button x:Name="ClearAllButton" Click="ClearAllButton_Click" Content="CLEAR FILTERS" Margin="7,0,8.4,10" Height="30" VerticalAlignment="Bottom" TabIndex="19" />
                         <local:MultiSelectComboBox x:Name="HeroSelect" AllText="ALL HEROES" Margin="96,72,11,0" SelectedItemsChanged="MultiSelectFilterChanged" TabIndex="3" Height="30" VerticalAlignment="Top" MouseRightButtonUp="ResetSetting"/>
                         <TextBox LostFocus="FilterFocusLost" x:Name="MinSkillRating" Margin="96,141,0,0" TextWrapping="Wrap" Text="0000" MaxLength="4" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="32" BorderBrush="#FFABADB3" RenderTransformOrigin="0.426,0.554" HorizontalAlignment="Left" Width="64" Height="36" VerticalAlignment="Top" TabIndex="5" BorderThickness="0,0,0,1" VerticalScrollBarVisibility="Disabled" Style="{DynamicResource TransparentTextBox}" />
                         <local:MultiSelectComboBox x:Name="MapSelect" AllText="ALL MAPS" Margin="96,37,11,0" VerticalAlignment="Top" FontSize="20" TabIndex="2" MouseRightButtonUp="ResetSetting" SelectedItemsChanged="MultiSelectFilterChanged" />
@@ -63,12 +63,12 @@
                         <TextBlock HorizontalAlignment="Left" Margin="209,182,0,0" TextWrapping="Wrap" Text="to" VerticalAlignment="Top" FontSize="24" Height="28" />
                         <DatePicker x:Name="EndDate" SelectedDateChanged="FilterChanged" Margin="231,184,-1.2,0" VerticalAlignment="Top" FontSize="14" TabIndex="8" HorizontalAlignment="Left" Width="110" Background="{x:Null}" BorderBrush="{x:Null}" MouseRightButtonUp="ResetSetting"/>
                         <TextBlock HorizontalAlignment="Left" Margin="184,376,0,0" TextWrapping="Wrap" Text="to" VerticalAlignment="Top" FontSize="24" Height="28" />
-                        <TextBox x:Name="MaxMinutes" LostFocus="FilterFocusLost" HorizontalAlignment="Left" Height="35" Margin="217,371,0,0" TextWrapping="Wrap" VerticalAlignment="Top" MaxLength="2" Width="40" FontSize="32" FontFamily="{DynamicResource BigNoodleTooOblique}" TextAlignment="Center" TabIndex="14" Style="{DynamicResource TransparentTextBox}" />
-                        <TextBox x:Name="MaxSeconds" LostFocus="FilterFocusLost" HorizontalAlignment="Left" Height="35" Margin="257,371,0,0" TextWrapping="Wrap" VerticalAlignment="Top" MaxLength="2" Width="40" FontSize="32" FontFamily="{DynamicResource BigNoodleTooOblique}" BorderThickness="0,0,0,1" TextAlignment="Center" TabIndex="15" Style="{DynamicResource TransparentTextBox}" />
+                        <TextBox x:Name="MaxMinutes" LostFocus="FilterFocusLost" HorizontalAlignment="Left" Height="35" Margin="217,371,0,0" TextWrapping="Wrap" VerticalAlignment="Top" MaxLength="2" Width="40" FontSize="32" FontFamily="{DynamicResource BigNoodleTooOblique}" TextAlignment="Center" TabIndex="16" Style="{DynamicResource TransparentTextBox}" />
+                        <TextBox x:Name="MaxSeconds" LostFocus="FilterFocusLost" HorizontalAlignment="Left" Height="35" Margin="257,371,0,0" TextWrapping="Wrap" VerticalAlignment="Top" MaxLength="2" Width="40" FontSize="32" FontFamily="{DynamicResource BigNoodleTooOblique}" BorderThickness="0,0,0,1" TextAlignment="Center" TabIndex="17" Style="{DynamicResource TransparentTextBox}" />
                         <TextBlock Margin="245,370,0,0" TextWrapping="Wrap" Text=":" VerticalAlignment="Top" FontSize="32" HorizontalAlignment="Left" Width="19" TextAlignment="Center" FontFamily="{DynamicResource BigNoodleTooOblique}" Height="37" />
                         <TextBlock x:Name="ErrorString" Margin="7,455,10.4,0" TextWrapping="Wrap" Text="Red Values Illegal and Ignored" VerticalAlignment="Top" Foreground="Red" TextAlignment="Center" />
                         <TextBlock Margin="22,410,0,0" TextWrapping="Wrap" Text="NOTES" VerticalAlignment="Top" FontSize="24" HorizontalAlignment="Left" Width="68" Height="23" />
-                        <TextBox x:Name="NotesTextBox" TextChanged="FilterTextChanged" HorizontalAlignment="Left" Height="23" Margin="97,410,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="244" Background="#CC27AAE1" BorderBrush="#CC27AAE1" Foreground="White"/>
+                        <TextBox x:Name="NotesTextBox" TextChanged="FilterTextChanged" HorizontalAlignment="Left" Height="23" Margin="97,410,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="244" Background="#CC27AAE1" BorderBrush="#CC27AAE1" Foreground="White" TabIndex="18"/>
                     </Grid>
                 </GroupBox>
                 <GroupBox Margin="8.6,67,1.2,0" Header="QUICK STATS" Grid.Column="1">
@@ -188,7 +188,7 @@
                 <TextBlock Margin="10,0,20.4,0" TextWrapping="Wrap" Text="VIEW GAMES" VerticalAlignment="Top" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="64" Height="58" />
             </Grid>
             <GroupBox Header="GAMES" Margin="0.2,68,10.4,10" Grid.Column="1">
-                <ListView ScrollViewer.ScrollChanged="GamesList_ScrollChanged" x:Name="GamesList" MouseDoubleClick="GamesList_MouseDoubleClick" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Foreground="Black" Margin="10,10,10,9.6" Background="{x:Null}">
+                <ListView ScrollViewer.ScrollChanged="GamesList_ScrollChanged" x:Name="GamesList" MouseDoubleClick="GamesList_MouseDoubleClick" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Foreground="Black" Margin="10,10,10,9.6" Background="{x:Null}" TabIndex="20">
                     <ListView.View>
                         <GridView ColumnHeaderContainerStyle="{StaticResource NoHeader}">
                             <GridViewColumn />

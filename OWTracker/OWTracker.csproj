@@ -191,9 +191,6 @@
     <Compile Include="ImportGames.Designer.cs">
       <DependentUpon>ImportGames.cs</DependentUpon>
     </Compile>
-    <Compile Include="MapStats.xaml.cs">
-      <DependentUpon>MapStats.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MultiSelectComboBox.xaml.cs">
       <DependentUpon>MultiSelectComboBox.xaml</DependentUpon>
     </Compile>
@@ -249,10 +246,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MapStats.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MultiSelectComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

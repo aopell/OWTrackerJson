@@ -120,13 +120,6 @@ namespace OWTracker.Data
 
         public async Task DeleteGameAsync(long gameId, long userId) => await AsyncHelpers.RunAsync(() => DeleteGame(gameId, userId));
 
-        private static byte[] Hash(string value, byte[] salt)
-        {
-            byte[] saltedValue = Encoding.UTF8.GetBytes(value).Concat(salt).ToArray();
-
-            return new SHA256Managed().ComputeHash(saltedValue);
-        }
-
         private IEnumerable<User> LoadUsers()
         {
             if (!File.Exists(usersFilePath))

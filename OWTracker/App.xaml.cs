@@ -40,6 +40,7 @@ namespace OWTracker
             error.AppendLine("===========================================");
             error.AppendLine();
             error.AppendLine($"Date: {DateTimeOffset.Now}");
+            error.AppendLine($"Application Name: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>()?.Title ?? "unknown"}");
             error.AppendLine($"Application Version: {Assembly.GetExecutingAssembly().GetName().Version}");
             error.AppendLine($"Status Text: {Config.Window?.StatusText?.Text ?? "null"}");
             error.AppendLine($"Username: {Config.LoggedInUser?.Username ?? "null"}");
