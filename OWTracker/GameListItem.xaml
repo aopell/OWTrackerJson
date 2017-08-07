@@ -4,13 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:OWTracker"
+             x:Name="GameListItemControl"
              mc:Ignorable="d" Height="52.842" Width="390">
-    <Grid>
-        <Image x:Name="RankIcon" HorizontalAlignment="Left" Width="56" Source="pack://siteoforigin:,,,/Resources/platinum.png" />
-        <TextBlock x:Name="CurrentRank" Margin="51,-3,0,-4" TextWrapping="Wrap" Text="2500" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="54" Foreground="White" HorizontalAlignment="Left" Width="96" />
-        <TextBlock x:Name="RankChange" Margin="136,21,0,3" TextWrapping="Wrap" Text="(+1234)" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="28" Foreground="White" HorizontalAlignment="Left" FontStyle="Italic" Width="79" />
-        <TextBlock x:Name="Date" Margin="0,5,5,0" TextWrapping="Wrap" Text="DEC 3" Width="179" FontSize="20" Foreground="#FFA9AEB8" HorizontalAlignment="Right" TextAlignment="Right" Height="21" VerticalAlignment="Top" FontFamily="{DynamicResource Futura}" />
-        <TextBlock x:Name="Map" HorizontalAlignment="Right" Margin="0,0,5,5" TextWrapping="Wrap" Text="WATCHPOINT: GIBRALTAR" Width="201" FontSize="16" Foreground="#FFDDE0E8" Height="17" VerticalAlignment="Bottom" TextAlignment="Right" FontFamily="{DynamicResource Futura}" />
-        <TextBlock x:Name="SRText" Text="SR" HorizontalAlignment="Left" Margin="142,1,0,0" VerticalAlignment="Top" Foreground="#FFDD2CFF" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="24" Height="24" RenderTransformOrigin="-0.1,0.5" Width="24" />
-    </Grid>
+    <Viewbox Stretch="Uniform">
+        <Grid Width="{Binding Width, ElementName=GameListItemControl}" Height="{Binding Height, ElementName=GameListItemControl}">
+            <Image x:Name="RankIcon" HorizontalAlignment="Left" Width="56" Source="pack://siteoforigin:,,,/Resources/platinum.png" />
+            <TextBlock x:Name="CurrentRank" Margin="51,-3,0,-4" TextWrapping="Wrap" Text="2500" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="{Binding Height, ElementName=GameListItemControl}" Foreground="White" HorizontalAlignment="Left" Width="96" />
+            <TextBlock x:Name="RankChange" Margin="136,21,0,3" TextWrapping="Wrap" Text="(+1234)" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="28" Foreground="White" HorizontalAlignment="Left" FontStyle="Italic" Width="79" />
+            <TextBlock x:Name="Date" Margin="0,5,5,0" TextWrapping="Wrap" Text="DEC 3" Width="179" FontSize="18" Foreground="#FFA9AEB8" HorizontalAlignment="Right" TextAlignment="Right" Height="21" VerticalAlignment="Top" FontFamily="{DynamicResource Futura}" />
+            <TextBlock x:Name="Map" HorizontalAlignment="Right" Margin="0,0,5,5" TextWrapping="Wrap" Text="WATCHPOINT: GIBRALTAR" Width="201" FontSize="16" Foreground="#FFDDE0E8" Height="17" VerticalAlignment="Bottom" TextAlignment="Right" FontFamily="{DynamicResource Futura}" />
+            <TextBlock x:Name="SRText" Text="SR" HorizontalAlignment="Left" Margin="142,1,0,0" VerticalAlignment="Top" Foreground="#FFDD2CFF" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="24" Height="24" RenderTransformOrigin="-0.1,0.5" Width="24" />
+        </Grid>
+    </Viewbox>
 </UserControl>

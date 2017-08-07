@@ -25,7 +25,7 @@ namespace OWTracker
             try // Check for Updates
             {
                 var webclient = new WebClient();
-                string updateInfo = webclient.DownloadString("http://aopell.me/projects/OWTrackerVersion.txt");
+                string updateInfo = webclient.DownloadString(Config.UpdateUrl);
 
                 if (v >= Version.Parse(updateInfo.Split('-')[0])) return;
                 var uA = new UpdateAvailable();

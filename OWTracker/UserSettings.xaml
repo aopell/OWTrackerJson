@@ -9,7 +9,7 @@
              FontSize="18"
              mc:Ignorable="d" Width="1246" Height="628">
     <Grid>
-        <GroupBox Header="PROFILE" HorizontalAlignment="Left" Margin="10,73,0,10" Width="455" FontSize="32">
+        <GroupBox Header="PROFILE" HorizontalAlignment="Left" Margin="10,73,0,10" Width="455" FontSize="24">
             <Grid>
                 <TextBox x:Name="BattleTag" HorizontalAlignment="Left" Height="29" Margin="108,11,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="204" MaxLength="12" FontSize="24" Style="{DynamicResource TransparentTextBox}" TextAlignment="Right" TabIndex="5" />
                 <TextBox x:Name="Discriminator" HorizontalAlignment="Left" Height="29" Margin="333,11,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="84" MaxLength="5" FontSize="24" Style="{DynamicResource TransparentTextBox}" TabIndex="10" />
@@ -25,7 +25,7 @@
                 <Button Content="VIEW PLAYOVERWATCH.COM PROFILE" HorizontalAlignment="Left" Margin="10,400,0,0" VerticalAlignment="Top" Width="423" Height="42" FontSize="24"  Click="PlayOverwatch_Click" TabIndex="50" />
             </Grid>
         </GroupBox>
-        <GroupBox Header="ACCOUNT" HorizontalAlignment="Left" Margin="492,73,0,10" Width="360" FontSize="32">
+        <GroupBox Header="ACCOUNT" HorizontalAlignment="Left" Margin="492,73,0,10" Width="360" FontSize="24">
             <Grid>
                 <Button Content="CHANGE USERNAME" Margin="10,43,10,0" VerticalAlignment="Top" Height="45" FontSize="24"  Click="ChangeUsername_Click" TabIndex="60" />
                 <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Username" VerticalAlignment="Top" FontSize="24"/>
@@ -41,7 +41,7 @@
                 </Grid>
             </Grid>
         </GroupBox>
-        <GroupBox Header="GENERAL" HorizontalAlignment="Left" Margin="876,73,0,10" Width="360" FontSize="32">
+        <GroupBox Header="GENERAL" HorizontalAlignment="Left" Margin="876,73,0,10" Width="360" FontSize="24">
             <Grid>
                 <TextBlock HorizontalAlignment="Left" Margin="4.973,9,0,0" TextWrapping="Wrap" Text="Show SR change for last" VerticalAlignment="Top" FontSize="24" />
                 <TextBox x:Name="RecentHours" HorizontalAlignment="Left" Height="29" Margin="246.803,9,0,0" TextWrapping="Wrap" Text="12" MaxLength="2" VerticalAlignment="Top" Width="37" FontSize="24" Style="{DynamicResource TransparentTextBox}" TabIndex="90" />

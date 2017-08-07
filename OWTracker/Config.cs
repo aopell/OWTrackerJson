@@ -28,7 +28,7 @@ namespace OWTracker
             DataSource = new JsonDataProvider(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\{Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title}");
             ChangelogUrl = "http://aopell.me/projects/OWTrackerJsonChangelog.html";
             UpdateUrl = "http://aopell.me/projects/owjv.txt";
-            LocalDataSource = DataSource.GetType().GetCustomAttributes(typeof(LocalDataProviderAttribute), false).Length > 0;
+            LocalDataSource = DataSource.GetType().IsDefined(typeof(LocalDataProviderAttribute));
         }
 
         public static BitmapSource GetImageForSkillRating(int sr, bool showDash = false)

@@ -148,7 +148,7 @@
                         <Label Content="SR " Margin="295,2,26,0" Foreground="#FFDD2CFF" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="28" Height="36" VerticalAlignment="Top"/>
                         <TextBlock x:Name="ChangeFromPlacement" Margin="326,7,0,0" TextWrapping="Wrap" Text="(----)" VerticalAlignment="Top" FontSize="28" FontFamily="{DynamicResource BigNoodleTooOblique}"/>
                         <Image HorizontalAlignment="Left" Stretch="Uniform" Source="Resources/competitive_points.png" Height="25" Margin="51,20,0,0" VerticalAlignment="Top" Width="21"/>
-                        <TextBox x:Name="CompetitivePoints" LostFocus="CompetitivePoints_LostFocus" HorizontalAlignment="Left" Height="43" MaxLength="4" FontSize="42" Margin="72,10,0,0" FontFamily="{DynamicResource BigNoodleTooOblique}" TextWrapping="Wrap" Text="0000" VerticalAlignment="Top" Width="78" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0,0,0,1"/>
+                        <TextBox x:Name="CompetitivePoints" LostFocus="CompetitivePoints_LostFocus" KeyDown="CompetitivePoints_KeyDown" HorizontalAlignment="Left" Height="43" MaxLength="4" FontSize="42" Margin="72,10,0,0" FontFamily="{DynamicResource BigNoodleTooOblique}" TextWrapping="Wrap" Text="0000" VerticalAlignment="Top" Width="78" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0,0,0,1"/>
                     </Grid>
                 </Viewbox>
                 <GroupBox x:Name="SeasonGroupBox" FontSize="18" Margin="10,0,10,10" Grid.Column="1" Grid.Row="1" Header="SEASON">

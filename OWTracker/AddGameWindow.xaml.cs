@@ -165,6 +165,22 @@ namespace OWTracker
                 return;
             }
 
+            if (GameOutcome.Visibility == Visibility.Visible && GameOutcome.Content.ToString() == "DRAW" && rscore != bscore
+                && MessageBox.Show("Your skill rating is unchanged, however the score you entered indicates that the game was not a draw.\nAre you sure the information you entered is correct?", "Game Outcome Check", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+            if (GameOutcome.Visibility == Visibility.Visible && GameOutcome.Content.ToString() == "VICTORY" && (string.IsNullOrEmpty(RedTeamScore.Text) || string.IsNullOrEmpty(BlueTeamScore.Text)) && bscore <= rscore
+                && MessageBox.Show("Your skill rating change indicates that you won the game, however the score you entered does not.\nAre you sure the information you entered is correct?", "Game Outcome Check", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+            if (GameOutcome.Visibility == Visibility.Visible && GameOutcome.Content.ToString() == "DEFEAT" && (string.IsNullOrEmpty(RedTeamScore.Text) || string.IsNullOrEmpty(BlueTeamScore.Text)) && bscore >= rscore
+                && MessageBox.Show("Your skill rating change indicates that you lost the game, however the score you entered does not.\nAre you sure the information you entered is correct?", "Game Outcome Check", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
             if (!Update && (mostRecentGame == null || season != mostRecentGame.Season) && MessageBox.Show($"Are you sure you want to create Season {SeasonNumber.Text}{(NewSkillRating.Text.ToLower() != "plmt" ? $" with placement rating {NewSkillRating.Text}" : "")}?", "New Season", MessageBoxButton.YesNo, MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No) return;
 
             if (mostRecentGame != null && season != mostRecentGame.Season)
@@ -177,7 +193,7 @@ namespace OWTracker
                     case MessageBoxResult.No:
                         Cancel = true;
                         Close();
-                        break;
+                        return;
                     case MessageBoxResult.Yes:
                         break;
                     default:
@@ -190,23 +206,30 @@ namespace OWTracker
 
             bool placement = false;
             bool? placementWon = null;
-            if (mostRecentGame == null || PlacementCheckBox.IsChecked == true || mostRecentGame.SkillRating == 0)
+            if (string.IsNullOrEmpty(RedTeamScore.Text) || string.IsNullOrEmpty(BlueTeamScore.Text))
             {
-                placement = true;
-                MessageBoxResult result = MessageBox.Show("Hey! This is a placement game and it is impossible to determine if you won by your skill rating. Did you win this game?\n\nYes: You won\nNo: You lost\nCancel: You tied", "Placement Game Result", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.None);
-                switch (result)
+                if (mostRecentGame == null || PlacementCheckBox.IsChecked == true || mostRecentGame.SkillRating == 0)
                 {
-                    case MessageBoxResult.Yes:
-                        placementWon = true;
-                        break;
-                    case MessageBoxResult.No:
-                        placementWon = false;
-                        break;
-                    case MessageBoxResult.Cancel:
-                        break;
-                    default:
-                        return;
+                    placement = true;
+                    MessageBoxResult result = MessageBox.Show("Hey! This is a placement game and since you didn't enter a score, it is impossible to determine if you won by your skill rating. Did you win this game?\n\nYes: You won\nNo: You lost\nCancel: You tied", "Placement Game Result", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.None);
+                    switch (result)
+                    {
+                        case MessageBoxResult.Yes:
+                            placementWon = true;
+                            break;
+                        case MessageBoxResult.No:
+                            placementWon = false;
+                            break;
+                        case MessageBoxResult.Cancel:
+                            break;
+                        default:
+                            return;
+                    }
                 }
+            }
+            else
+            {
+                placementWon = bscore > rscore ? true : (bscore == rscore ? (bool?)null : false);
             }
 
             Hide();
@@ -359,10 +382,8 @@ namespace OWTracker
 
         private void EstimateRounds()
         {
-            byte bScore = 0;
-            byte rScore = 0;
-            byte.TryParse(BlueTeamScore.Text, out bScore);
-            byte.TryParse(RedTeamScore.Text, out rScore);
+            byte.TryParse(BlueTeamScore.Text, out byte bScore);
+            byte.TryParse(RedTeamScore.Text, out byte rScore);
 
             if (((string[])Application.Current.Resources["ControlMaps"]).Contains(SelectedMap.SelectedValue))
             {
@@ -380,11 +401,11 @@ namespace OWTracker
                 }
                 else if (((string[])Application.Current.Resources["AssaultMaps"]).Contains(SelectedMap.SelectedValue))
                 {
-                    RoundNumber.Text = ((int)(Math.Ceiling(bScore / 2f) + Math.Ceiling(rScore / 2f))).ToString();
+                    RoundNumber.Text = ((int)(Math.Ceiling((bScore == 0 ? 1 : bScore) / 2f) + Math.Ceiling((rScore == 0 ? 1 : rScore) / 2f))).ToString();
                 }
                 else if (((string[])Application.Current.Resources["HybridMaps"]).Contains(SelectedMap.SelectedValue))
                 {
-                    RoundNumber.Text = ((int)(Math.Ceiling(bScore / 3d) + Math.Ceiling(rScore / 3d) + (bScore == rScore ? 1 : 0))).ToString();
+                    RoundNumber.Text = ((int)(Math.Ceiling((bScore == 0 ? 1 : bScore) / 3d) + Math.Ceiling((rScore == 0 ? 1 : rScore) / 3d) + (bScore == rScore ? 1 : 0))).ToString();
                 }
             }
         }

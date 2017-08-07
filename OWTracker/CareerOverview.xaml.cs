@@ -261,6 +261,19 @@ namespace OWTracker
 
         private async void CompetitivePoints_LostFocus(object sender, RoutedEventArgs e)
         {
+            await UpdateCompetitivePoints();
+        }
+
+        private async void CompetitivePoints_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await UpdateCompetitivePoints();
+            }
+        }
+
+        private async Task UpdateCompetitivePoints()
+        {
             Config.SetBusyStatus("Updating competitive points");
             if (int.TryParse(CompetitivePoints.Text, out int points) && points >= 0)
             {

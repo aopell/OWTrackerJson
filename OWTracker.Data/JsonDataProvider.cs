@@ -155,7 +155,10 @@ namespace OWTracker.Data
                 File.Create(gamesFilePath).Close();
             }
 
-            return JsonConvert.DeserializeObject<IEnumerable<Game>>(File.ReadAllText(gamesFilePath));
+            int gameId = 0;
+            var games = JsonConvert.DeserializeObject<List<Game>>(File.ReadAllText(gamesFilePath));
+            games.ForEach(x => x.GameID = gameId++);
+            return games.OrderByDescending(x => x.Date);
         }
 
         private void SaveGames(IEnumerable<Game> games)

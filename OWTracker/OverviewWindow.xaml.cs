@@ -101,6 +101,7 @@ namespace OWTracker
 
         private async void OverwatchProcess_Exited(object sender, EventArgs e)
         {
+            Config.SetFinishedStatus("Overwatch application closed");
             await Task.Delay(300000);
             UpdateOnlineProfiles();
             overwatchProcess = null;

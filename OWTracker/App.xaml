@@ -86,7 +86,7 @@
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="BorderThickness" Value="1" />
-                    <Setter Property="BorderBrush" Value="{x:Null}" />
+                    <Setter Property="BorderBrush" Value="Black" />
                     <Setter Property="Background" Value="{StaticResource OverwatchOrange}"/>
                     <Setter Property="Foreground" Value="White"/>
                 </Trigger>
@@ -101,7 +101,7 @@
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="BorderThickness" Value="1" />
-                    <Setter Property="BorderBrush" Value="{x:Null}" />
+                    <Setter Property="BorderBrush" Value="Black" />
                     <Setter Property="Background" Value="{StaticResource OverwatchBlue}"/>
                     <Setter Property="Foreground" Value="White"/>
                 </Trigger>
