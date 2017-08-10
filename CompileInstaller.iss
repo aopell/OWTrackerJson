@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Overwatch Competitive Game Tracker - JSON Version"
-#define MyAppVersion "1.1.1.7"
+#define MyAppVersion "1.2.0.0"
 #define MyAppPublisher "Aaron Opell"
 #define MyAppURL "http://aopell.me"
 #define MyAppExeName "OWTracker.exe"

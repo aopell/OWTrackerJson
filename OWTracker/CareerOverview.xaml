@@ -13,6 +13,28 @@
         <Style x:Key="NoHeader" TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="Visibility" Value="Collapsed" />
         </Style>
+        <Style x:Key="HoverButton" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#66000000" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="False">
+                    <Setter Property="Background" Value="#66000000" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#6602ffff" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Viewbox Stretch="Uniform" Margin="0,-1,0,0">
@@ -32,7 +54,10 @@
                             <TextBlock x:Name="Username" Text="THISISAREALLYLONGUSERNAMETHISISAREALLYLONGUSERNAME" FontFamily="{DynamicResource BigNoodleTooOblique}"/>
                         </Viewbox>
                         <Border BorderBrush="White" BorderThickness="3" HorizontalAlignment="Left" Width="72.001" d:LayoutOverrides="HorizontalAlignment">
-                            <Image x:Name="PlayerIcon" Source="Resources/default_avatar.png" HorizontalAlignment="Left" Height="65.502" Margin="0.25,0.249,-0.75,0" Stretch="Uniform" VerticalAlignment="Top" Width="69.5"/>
+                            <Grid>
+                                <Image x:Name="PlayerIcon" MouseEnter="RefreshIcon_MouseEnter" Source="Resources/default_avatar.png" Height="66" Stretch="Uniform" VerticalAlignment="Top" Margin="0,0,0,0"/>
+                                <Button x:Name="RefreshIconButton" Content="⟳" Click="RefreshIcon_Click" ToolTip="Refresh" MouseEnter="RefreshIcon_MouseEnter" MouseLeave="RefreshIcon_MouseLeave" FontSize="48" Style="{StaticResource HoverButton}" Foreground="White" BorderBrush="{x:Null}" BorderThickness="0" TabIndex="6" Margin="0,0,0,0" Visibility="Hidden"/>
+                            </Grid>
                         </Border>
                     </Grid>
                 </Viewbox>
@@ -148,7 +173,7 @@
                         <Label Content="SR " Margin="295,2,26,0" Foreground="#FFDD2CFF" FontFamily="{DynamicResource BigNoodleTooOblique}" FontSize="28" Height="36" VerticalAlignment="Top"/>
                         <TextBlock x:Name="ChangeFromPlacement" Margin="326,7,0,0" TextWrapping="Wrap" Text="(----)" VerticalAlignment="Top" FontSize="28" FontFamily="{DynamicResource BigNoodleTooOblique}"/>
                         <Image HorizontalAlignment="Left" Stretch="Uniform" Source="Resources/competitive_points.png" Height="25" Margin="51,20,0,0" VerticalAlignment="Top" Width="21"/>
-                        <TextBox x:Name="CompetitivePoints" LostFocus="CompetitivePoints_LostFocus" KeyDown="CompetitivePoints_KeyDown" HorizontalAlignment="Left" Height="43" MaxLength="4" FontSize="42" Margin="72,10,0,0" FontFamily="{DynamicResource BigNoodleTooOblique}" TextWrapping="Wrap" Text="0000" VerticalAlignment="Top" Width="78" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0,0,0,1"/>
+                        <TextBox x:Name="CompetitivePoints" LostFocus="CompetitivePoints_LostFocus" HorizontalAlignment="Left" Height="43" MaxLength="4" FontSize="42" Margin="72,10,0,0" FontFamily="{DynamicResource BigNoodleTooOblique}" TextWrapping="Wrap" Text="0000" VerticalAlignment="Top" Width="78" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0,0,0,1"/>
                     </Grid>
                 </Viewbox>
                 <GroupBox x:Name="SeasonGroupBox" FontSize="18" Margin="10,0,10,10" Grid.Column="1" Grid.Row="1" Header="SEASON">

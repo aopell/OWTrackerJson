@@ -75,7 +75,7 @@ namespace OWTracker
         public static async Task Refresh()
         {
             await LoggedInUser.RefreshGamesAsync();
-            await Overview.UpdateStatistics();
+            await Overview.UpdateStatistics(true);
             await ViewGames.FilterGames(true);
             await Graphs.UpdateGraphs(true);
             await Settings.UpdateSettings();

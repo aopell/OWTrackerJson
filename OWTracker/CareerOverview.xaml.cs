@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json.Linq;
 using OWTracker.Data;
+using HtmlElement = System.Windows.Forms.HtmlElement;
 
 namespace OWTracker
 {
@@ -29,30 +31,21 @@ namespace OWTracker
             Username.Text = Config.LoggedInUser.Username;
         }
 
-        public async Task UpdateStatistics()
+        public async Task UpdateStatistics(bool refreshIcon = false)
         {
             await Task.Run(
             () =>
             {
                 Dispatcher.Invoke(
-                () =>
+                async () =>
                 {
 
                     RecentGamesList.Items.Clear();
                     Game mostRecent = Config.LoggedInUser.MostRecentGame;
 
-                    try
+                    if (refreshIcon)
                     {
-                        if (Config.LoggedInUser.BattleTag != null)
-                        {
-                            var wb = new System.Windows.Forms.WebBrowser();
-                            wb.Navigated += Wb_Navigated;
-                            wb.Navigate($"https://playoverwatch.com/en-us/career/pc/us/{Config.LoggedInUser.BattleTag}");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        PlayerIcon.Source = Properties.Resources.default_avatar.GetSource();
+                        await RefreshIcon();
                     }
 
                     if (mostRecent != null)
@@ -197,19 +190,27 @@ namespace OWTracker
             try
             {
                 var browser = (System.Windows.Forms.WebBrowser)sender;
+                bool showStatus = (bool)browser.Tag;
                 var elements = browser.Document.GetElementsByTagName("img");
 
-                foreach (System.Windows.Forms.HtmlElement element in elements)
+                foreach (HtmlElement element in elements.Cast<HtmlElement>().Where(element => element.GetAttribute("className") == "player-portrait"))
                 {
-                    if (element.GetAttribute("className") == "player-portrait")
+                    PlayerIcon.Source = new BitmapImage(new Uri(element.GetAttribute("src")));
+                    if (showStatus)
                     {
-                        PlayerIcon.Source = new BitmapImage(new Uri(element.GetAttribute("src")));
+                        Config.SetFinishedStatus("Player icon updated");
                     }
+                    return;
+                }
+                if (showStatus)
+                {
+                    Config.SetFinishedStatus("Icon not found, try again", error: true);
                 }
             }
             catch
             {
                 PlayerIcon.Source = Properties.Resources.default_avatar.GetSource();
+                Config.SetFinishedStatus("Icon not found, try again", error: true);
             }
         }
 
@@ -246,11 +247,11 @@ namespace OWTracker
                 case Key.Back:
                     if (RecentGamesList.SelectedItems.Count > 0 && MessageBox.Show($"Are you sure you want to delete {RecentGamesList.SelectedItems.Count} items?", "Delete Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
                     {
-                        int count = RecentGamesList.SelectedItems.Count;
-                        foreach (GameListItem g in RecentGamesList.SelectedItems)
+                        var games = RecentGamesList.SelectedItems.Cast<GameListItem>().OrderByDescending(x => x.GameId).ToList();
+                        for (int i = 0; i < games.Count; i++)
                         {
-                            Config.SetBusyStatus($"Deleting {count} {(count-- != 1 ? "games" : "game")}");
-                            await Config.LoggedInUser.DeleteGame(g.GameId);
+                            Config.SetBusyStatus($"Deleting game ({i + 1}/{games.Count})");
+                            await Config.LoggedInUser.DeleteGame(games[i].GameId);
                         }
                     }
                     await Config.Refresh();
@@ -290,6 +291,62 @@ namespace OWTracker
             }
 
             Config.SetFinishedStatus("Competitive points updated");
+        }
+
+        private async void RefreshIcon_Click(object sender, RoutedEventArgs e)
+        {
+            await RefreshIcon(showStatus: true);
+        }
+
+        private async Task RefreshIcon(bool showStatus = false)
+        {
+            if (showStatus)
+            {
+                Config.SetBusyStatus("Updating player icon");
+            }
+            await Task.Run(
+            () =>
+            {
+                Dispatcher.Invoke(
+                () =>
+                {
+                    try
+                    {
+                        if (Config.LoggedInUser.BattleTag != null)
+                        {
+                            var wb = new System.Windows.Forms.WebBrowser();
+                            wb.Navigated += Wb_Navigated;
+                            wb.Navigate($"https://playoverwatch.com/en-us/career/pc/us/{Config.LoggedInUser.BattleTag}");
+                            wb.Tag = showStatus;
+                        }
+                        else
+                        {
+                            if (showStatus)
+                            {
+                                Config.SetFinishedStatus("BattleTag not found", error: true);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        PlayerIcon.Source = Properties.Resources.default_avatar.GetSource();
+                        if (showStatus)
+                        {
+                            Config.SetFinishedStatus("Error finding player icon", error: true);
+                        }
+                    }
+                });
+            });
+        }
+
+        private void RefreshIcon_MouseEnter(object sender, MouseEventArgs e)
+        {
+            RefreshIconButton.Visibility = Visibility.Visible;
+        }
+
+        private void RefreshIcon_MouseLeave(object sender, MouseEventArgs e)
+        {
+            RefreshIconButton.Visibility = Visibility.Hidden;
         }
     }
 }

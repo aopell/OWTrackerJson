@@ -8,15 +8,18 @@
         mc:Ignorable="d"
         FontFamily="{StaticResource Futura}"
         FontSize="16"
+        x:Name="Window"
         Title="Window Title" Height="246" Width="699.729" Background="White">
-    <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="Resources/background.jpg"/>
-        </Grid.Background>
-        <TextBlock x:Name="Message" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" FontSize="24" Height="78" Width="672"/>
-        <TextBox x:Name="RegularTextBox" Height="37" Margin="10,93,10,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" FontSize="24" VerticalContentAlignment="Center"/>
-        <PasswordBox x:Name="PasswordTextBox" Margin="10,93,10,0" VerticalAlignment="Top" Height="37" FontSize="24" VerticalContentAlignment="Center"/>
-        <Button x:Name="Button" Content="BUTTON TEXT" Margin="476,158,10,10" IsDefault="True" FontSize="22" Style="{DynamicResource PrimaryButton}" Click="Button_Click"/>
-        <Button Content="CANCEL" Margin="299,158,221,10" FontSize="22" Click="Button_Click_1"/>
-    </Grid>
+    <Viewbox Stretch="Fill">
+        <Grid Width="{Binding Width, ElementName=Window}" Height="{Binding Height, ElementName=Window}">
+            <Grid.Background>
+                <ImageBrush ImageSource="Resources/background.jpg"/>
+            </Grid.Background>
+            <TextBlock x:Name="Message" Margin="10,10,17.729,121" TextWrapping="Wrap" Text="TextBlock" FontSize="24"/>
+            <TextBox x:Name="RegularTextBox" Height="37" Margin="10,0,9.729,79" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Bottom" FontSize="24" VerticalContentAlignment="Center"/>
+            <PasswordBox x:Name="PasswordTextBox" Margin="10,0,9.729,79" VerticalAlignment="Bottom" Height="37" FontSize="24" VerticalContentAlignment="Center"/>
+            <Button x:Name="PrimaryButton" Content="BUTTON TEXT" Margin="0,0,9.729,10" IsDefault="True" FontSize="22" Style="{DynamicResource PrimaryButton}" Click="Button_Click" Height="46" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="214"/>
+            <Button x:Name="SecondaryButton" Content="CANCEL" Margin="0,0,228.729,10" FontSize="22" Click="Button_Click_1" IsCancel="True" Height="46" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="193"/>
+        </Grid>
+    </Viewbox>
 </Window>

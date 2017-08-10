@@ -30,13 +30,26 @@ namespace OWTracker
             {
                 var v = (from x in new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem").Get().Cast<ManagementObject>()
                          select x.GetPropertyValue("Caption")).FirstOrDefault();
-                windowsVersion = v != null ? v.ToString() : "Unknown";
+                windowsVersion = v?.ToString() ?? "Unknown";
             }
             catch { }
 
             StringBuilder error = new StringBuilder();
+
+            string rt;
+            if (sender is ExceptionDescription)
+            {
+                error.AppendLine("Though the program did not crash, something unexpected occurred. Please report this error by creating an issue with this crash report at http://github.com/aopell/OWTrackerJson/Issues.");
+                error.AppendLine();
+                rt = "ERROR";
+            }
+            else
+            {
+                rt = "CRASH";
+            }
+
             error.AppendLine("===========================================");
-            error.AppendLine("                CRASH REPORT               ");
+            error.AppendLine($"                {rt} REPORT               ");
             error.AppendLine("===========================================");
             error.AppendLine();
             error.AppendLine($"Date: {DateTimeOffset.Now}");
@@ -56,6 +69,10 @@ namespace OWTracker
             error.AppendLine($"Exception: {ex.GetType().Name}");
             error.AppendLine($"Exception Source: {ex.Source}");
             error.AppendLine($"Exception Location: {ex.TargetSite}");
+            if (sender is ExceptionDescription context)
+            {
+                error.AppendLine($"Exception Context: {context.Description}");
+            }
             error.AppendLine($"Exception Messages:");
             error.AppendLine(GetExceptionMessages(ex));
             error.AppendLine();
@@ -86,6 +103,11 @@ namespace OWTracker
             System.Diagnostics.Process.Start(fileName);
         }
 
+        public static void GenerateCrashReport(Exception e, string description)
+        {
+            OnException(new ExceptionDescription(description), new UnhandledExceptionEventArgs(e, false));
+        }
+
         private static string GetExceptionMessages(Exception e, string msgs = "")
         {
             if (e == null) return string.Empty;
@@ -93,6 +115,15 @@ namespace OWTracker
             if (e.InnerException != null)
                 msgs += $"\r\n| {e.InnerException.GetType().Name}: {GetExceptionMessages(e.InnerException)}";
             return msgs;
+        }
+
+        private class ExceptionDescription
+        {
+            public string Description { get; }
+            public ExceptionDescription(string description)
+            {
+                Description = description;
+            }
         }
     }
 }

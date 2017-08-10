@@ -267,10 +267,15 @@ namespace OWTracker
                 case Key.Back:
                     if (GamesList.SelectedItems.Count > 0 && MessageBox.Show($"Are you sure you want to delete {GamesList.SelectedItems.Count} items?", "Delete Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
                     {
-                        foreach (SmallGameListItem g in GamesList.SelectedItems)
-                            await Config.LoggedInUser.DeleteGame(g.GameId);
+                        var games = GamesList.SelectedItems.Cast<SmallGameListItem>().OrderByDescending(x => x.GameId).ToList();
+                        for (int i = 0; i < games.Count; i++)
+                        {
+                            Config.SetBusyStatus($"Deleting game ({i + 1}/{games.Count})");
+                            await Config.LoggedInUser.DeleteGame(games[i].GameId);
+                        }
                     }
                     await Config.Refresh();
+                    Config.SetFinishedStatus("Game(s) deleted");
                     break;
             }
         }
