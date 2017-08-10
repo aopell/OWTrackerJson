@@ -193,7 +193,7 @@ namespace OWTracker
                     case MessageBoxResult.No:
                         Cancel = true;
                         Close();
-                        break;
+                        return;
                     case MessageBoxResult.Yes:
                         break;
                     default:
