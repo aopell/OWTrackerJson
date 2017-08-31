@@ -66,11 +66,11 @@ namespace OWTracker
             TotalRankGained.Text = games.Games.Sum(x => x.SkillRatingDifference > 0 ? x.SkillRatingDifference : 0)?.ToString("+#;-#;+0") ?? "--";
             TotalRankLost.Text = games.Games.Sum(x => x.SkillRatingDifference < 0 ? x.SkillRatingDifference : 0)?.ToString("+#;-#;+0") ?? "--";
 
-            double? avgRankChange = games.Games.Average(x => x.SkillRatingDifference);
+            double? avgRankChange = games.GamesWithoutDecay.Average(x => x.SkillRatingDifference);
             AverageRankChange.Text = avgRankChange?.ToString("+0.###;-0.###;+0") ?? "--";
-            double? avgRankWon = games.Games.Where(x => x.GameWon == true).Average(x => x.SkillRatingDifference);
+            double? avgRankWon = games.GamesWithoutDecay.Where(x => x.GameWon == true).Average(x => x.SkillRatingDifference);
             AverageRankGain.Text = avgRankWon?.ToString("+0.###;-0.###;+0") ?? "--";
-            double? avgRankLost = games.Games.Where(x => x.GameWon == false).Average(x => x.SkillRatingDifference);
+            double? avgRankLost = games.GamesWithoutDecay.Where(x => x.GameWon == false).Average(x => x.SkillRatingDifference);
             AverageRankLoss.Text = avgRankLost?.ToString("+0.###;-0.###;+0") ?? "--";
 
             AttackFirst.Text = games.Games.Count(x => x.AttackFirst == true).ToString();
@@ -92,6 +92,16 @@ namespace OWTracker
             List<SmallGameListItem> items = GamesList.Items.Cast<SmallGameListItem>().ToList();
             items.AddRange(games.Games.Skip(GamesList.Items.Count).Take(count - GamesList.Items.Count).Select(g => new SmallGameListItem(g)));
             return items;
+        }
+
+        public void DisplayItems(int count)
+        {
+            itemsShown = 20;
+            GamesList.ItemsSource = UpdateItems(count);
+            if (GamesList.Items.Count > 0)
+            {
+                GamesList.ScrollIntoView(GamesList.Items[0]);
+            }
         }
 
         private void GamesList_MouseDoubleClick(object sender, MouseButtonEventArgs e)

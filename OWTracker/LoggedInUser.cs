@@ -117,11 +117,15 @@ namespace OWTracker
 
         public async Task AddGame(Game g)
         {
+            const int competitivePointsForWin = 15;
+            const int competitivePointsForDraw = 5;
+            const int competitivePointsForLoss = 0;
+
             await Config.DataSource.AddGameAsync(User.UserId, g);
 
             if (User.CompetitivePoints < 6000)
             {
-                int competitivePointsDelta = g.GameWon == true ? 10 : g.GameWon == null ? 3 : 0;
+                int competitivePointsDelta = g.GameWon == true ? competitivePointsForWin : g.GameWon == null ? competitivePointsForDraw : competitivePointsForLoss;
                 await Config.DataSource.UpdateUserAsync(User.UserId, User.Username, User.CompetitivePoints + competitivePointsDelta > 6000 ? 6000 : User.CompetitivePoints + competitivePointsDelta, User.BattleTag);
                 User.CompetitivePoints = User.CompetitivePoints + competitivePointsDelta > 6000 ? 6000 : User.CompetitivePoints + competitivePointsDelta;
             }

@@ -29,6 +29,10 @@ namespace OWTracker
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Username.Text = Config.LoggedInUser.Username;
+            if (!Config.LoggedInUser.EditPermissions)
+            {
+                CompetitivePoints.IsEnabled = false;
+            }
         }
 
         public async Task UpdateStatistics(bool refreshIcon = false)
@@ -75,7 +79,14 @@ namespace OWTracker
                         }
 
                         CurrentSR.Text = season.MostRecentSR > 0 ? season.MostRecentSR.ToString() : "PLMT";
-                        CurrentSRIcon.Source = Config.GetImageForSkillRating(season.High < 3500 ? season.High : season.MostRecentSR >= 3500 ? season.MostRecentSR : 3000);
+                        if ((season.Games.FirstOrDefault()?.Season ?? 0) < 6)
+                        {
+                            CurrentSRIcon.Source = Config.GetImageForSkillRating(season.High < 3500 ? season.High : season.MostRecentSR >= 3500 ? season.MostRecentSR : 3000);
+                        }
+                        else
+                        {
+                            CurrentSRIcon.Source = Config.GetImageForSkillRating(season.MostRecentSR);
+                        }
 
                         ChangeFromBest.Text = (season.MostRecentSR - allGames.High).ToString("(+#);(-#);(-0)");
                         ChangeFromAverage.Text = (season.MostRecentSR - allGames.Average).ToString("(+#);(-#);(+0)");

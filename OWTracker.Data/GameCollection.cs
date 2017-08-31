@@ -19,12 +19,13 @@ namespace OWTracker.Data
             if (calcDifference) CalculateSkillRatingDifference();
         }
 
+        public IEnumerable<Game> GamesWithoutDecay => Games.Where(x => x.Map != "SR Decay");
         public short High => Games.Any(x => x.SkillRating > 0) ? Games.Where(x => x.SkillRating > 0).Max(x => x.SkillRating) : (short)0;
         public short Low => Games.Any(x => x.SkillRating > 0) ? Games.Where(x => x.SkillRating > 0).Min(x => x.SkillRating) : (short)0;
         public short Average => Games.Any(x => x.SkillRating > 0) ? (short)Games.Where(x => x.SkillRating > 0).Average(x => x.SkillRating) : (short)0;
-        public int GamesPlayed => Games.Count;
+        public int GamesPlayed => GamesWon + GamesLost + GamesTied;
         public int GamesWon => Games.Count(x => x.GameWon == true);
-        public int GamesLost => Games.Count(x => x.GameWon == false);
+        public int GamesLost => GamesWithoutDecay.Count(x => x.GameWon == false);
         public int GamesTied => Games.Count(x => x.GameWon == null);
         public double WinPercentage => Math.Round((double)GamesWon / (GamesWon + GamesLost) * 100d, 2);
 
@@ -36,7 +37,7 @@ namespace OWTracker.Data
         public short MostRecentSR => Games.FirstOrDefault(x => x.SkillRating > 0)?.SkillRating ?? 0;
         public int ChangeFromFirst => Games.FirstOrDefault(x => x.SkillRating > 0) != null && Games.LastOrDefault(x => x.SkillRating > 0) != null ? Games.First(x => x.SkillRating > 0).SkillRating - Games.Last(x => x.SkillRating > 0).SkillRating : 0;
 
-        public int Count => GamesPlayed;
+        public int Count => Games.Count;
         private bool Descending { get; }
 
         public IEnumerable<string> SeasonComboBoxSource => Games.Select(x => x.Season).Distinct().Select(s => $"SEASON {s}");
@@ -47,9 +48,9 @@ namespace OWTracker.Data
             {
                 var stats = new Dictionary<string, WinStats>();
 
-                foreach (Game g in Games)
+                foreach (Game g in GamesWithoutDecay)
                 {
-                    if (g.Map == null || g.Map == "SR Decay") continue;
+                    if (g.Map == null) continue;
                     if (!stats.ContainsKey(g.Map)) stats[g.Map] = new WinStats(g.Map);
 
                     if (g.GameWon == true) stats[g.Map].GamesWon++;
@@ -70,7 +71,7 @@ namespace OWTracker.Data
             {
                 var stats = new Dictionary<string, WinStats>();
 
-                foreach (Game g in Games)
+                foreach (Game g in GamesWithoutDecay)
                 {
                     if (g.Heroes != null)
                     {
@@ -135,8 +136,8 @@ namespace OWTracker.Data
         {
             try
             {
-                int num = Games.Count(x => DateTimeOffset.Now - x.Date < TimeSpan.FromHours(hours) && x.Map != "SR Decay");
-                var games = Games.Where(x => DateTimeOffset.Now - x.Date < TimeSpan.FromHours(hours) && x.Map != "SR Decay");
+                int num = GamesWithoutDecay.Count(x => DateTimeOffset.Now - x.Date < TimeSpan.FromHours(hours));
+                var games = GamesWithoutDecay.Where(x => DateTimeOffset.Now - x.Date < TimeSpan.FromHours(hours));
                 if (num == 0) return "RECENT";
                 int? skillRatingChange = games.Sum(x => x.SkillRatingDifference);
                 int wins = games.Count(x => x.GameWon == true);

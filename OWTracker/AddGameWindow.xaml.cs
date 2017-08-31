@@ -165,26 +165,23 @@ namespace OWTracker
                 return;
             }
 
-            if (GameOutcome.Visibility == Visibility.Visible && GameOutcome.Content.ToString() == "DRAW" && rscore != bscore
+            if (SkillRatingChange.Visibility == Visibility.Visible && GameOutcome.Content.ToString() == "DRAW" && rscore != bscore
                 && MessageBox.Show("Your skill rating is unchanged, however the score you entered indicates that the game was not a draw.\nAre you sure the information you entered is correct?", "Game Outcome Check", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
             {
                 return;
             }
-            if (GameOutcome.Visibility == Visibility.Visible && GameOutcome.Content.ToString() == "VICTORY" && (string.IsNullOrEmpty(RedTeamScore.Text) || string.IsNullOrEmpty(BlueTeamScore.Text)) && bscore <= rscore
+            if (SkillRatingChange.Visibility == Visibility.Visible && GameOutcome.Content.ToString() == "VICTORY" && !string.IsNullOrEmpty(RedTeamScore.Text) && !string.IsNullOrEmpty(BlueTeamScore.Text) && bscore <= rscore
                 && MessageBox.Show("Your skill rating change indicates that you won the game, however the score you entered does not.\nAre you sure the information you entered is correct?", "Game Outcome Check", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
             {
                 return;
             }
-            if (GameOutcome.Visibility == Visibility.Visible && GameOutcome.Content.ToString() == "DEFEAT" && (string.IsNullOrEmpty(RedTeamScore.Text) || string.IsNullOrEmpty(BlueTeamScore.Text)) && bscore >= rscore
+            if (SkillRatingChange.Visibility == Visibility.Visible && GameOutcome.Content.ToString() == "DEFEAT" && !string.IsNullOrEmpty(RedTeamScore.Text) && !string.IsNullOrEmpty(BlueTeamScore.Text) && bscore >= rscore
                 && MessageBox.Show("Your skill rating change indicates that you lost the game, however the score you entered does not.\nAre you sure the information you entered is correct?", "Game Outcome Check", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
             {
                 return;
             }
 
             if (!Update && (mostRecentGame == null || season != mostRecentGame.Season) && MessageBox.Show($"Are you sure you want to create Season {SeasonNumber.Text}{(NewSkillRating.Text.ToLower() != "plmt" ? $" with placement rating {NewSkillRating.Text}" : "")}?", "New Season", MessageBoxButton.YesNo, MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No) return;
-
-            if (mostRecentGame != null && season != mostRecentGame.Season)
-                await Config.LoggedInUser.UpdateCompetitivePoints(Config.LoggedInUser.CompetitivePoints + Config.GetCompetitivePointsForSkillRating(Config.LoggedInUser.GetGamesBySeason(mostRecentGame.Season).High) ?? 0);
 
             if (Update)
             {
@@ -206,11 +203,12 @@ namespace OWTracker
 
             bool placement = false;
             bool? placementWon = null;
-            if (string.IsNullOrEmpty(RedTeamScore.Text) || string.IsNullOrEmpty(BlueTeamScore.Text))
+            if (mostRecentGame == null || PlacementCheckBox.IsChecked == true || mostRecentGame.SkillRating == 0)
             {
-                if (mostRecentGame == null || PlacementCheckBox.IsChecked == true || mostRecentGame.SkillRating == 0)
+                placement = true;
+                if (string.IsNullOrEmpty(RedTeamScore.Text) || string.IsNullOrEmpty(BlueTeamScore.Text))
                 {
-                    placement = true;
+
                     MessageBoxResult result = MessageBox.Show("Hey! This is a placement game and since you didn't enter a score, it is impossible to determine if you won by your skill rating. Did you win this game?\n\nYes: You won\nNo: You lost\nCancel: You tied", "Placement Game Result", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.None);
                     switch (result)
                     {
@@ -226,13 +224,25 @@ namespace OWTracker
                             return;
                     }
                 }
+                else
+                {
+                    placementWon = bscore > rscore ? true : (bscore == rscore ? (bool?)null : false);
+                }
             }
-            else
+
+            if (mostRecentGame != null && Math.Abs(sr - mostRecentGame.SkillRating) > 100
+                && MessageBox.Show("Your skill rating change seems to be quite extreme.\nAre you sure the information you entered is accurate?", "Reasonable Skill Rating Change Check", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
             {
-                placementWon = bscore > rscore ? true : (bscore == rscore ? (bool?)null : false);
+                return;
             }
 
             Hide();
+
+            if (mostRecentGame != null && season != mostRecentGame.Season)
+            {
+                Config.SetBusyStatus("Applying end of season rewards");
+                await Config.LoggedInUser.UpdateCompetitivePoints(Config.LoggedInUser.CompetitivePoints + Config.GetCompetitivePointsForSkillRating(Config.LoggedInUser.GetGamesBySeason(mostRecentGame.Season).High) ?? 0);
+            }
 
             if (Update)
             {
@@ -296,18 +306,40 @@ namespace OWTracker
 
         private void NewSkillRating_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (SkillRatingChange == null) return;
-            if (!int.TryParse(NewSkillRating.Text, out int sr)) return;
+            UpdateGameResultText();
+        }
 
-            TierIcon.Source = Config.GetImageForSkillRating(sr);
+        private void UpdateGameResultText()
+        {
+            if (SkillRatingChange == null) return;
 
             bool validSeason = byte.TryParse(SeasonNumber.Text, out byte season);
 
-            if (validSeason && mostRecentGame != null && mostRecentGame.Season == season && mostRecentGame.SkillRating > 0)
+            if (validSeason && mostRecentGame != null)
             {
-                SkillRatingChange.Visibility = Visibility.Visible;
+                bool validSr = int.TryParse(NewSkillRating.Text, out int sr);
+                if (!validSr && (mostRecentGame.Season != season || mostRecentGame.SkillRating <= 0))
+                {
+                    bool scoreBValid = short.TryParse(BlueTeamScore.Text, out short bscore) && bscore >= 0;
+                    bool scoreRValid = short.TryParse(RedTeamScore.Text, out short rscore) && rscore >= 0;
+                    if (!scoreBValid || !scoreRValid)
+                    {
+                        GameOutcome.Visibility = Visibility.Hidden;
+                        return;
+                    }
+                    if (bscore > rscore) sr = mostRecentGame.SkillRating + 1;
+                    else if (bscore < rscore) sr = mostRecentGame.SkillRating - 1;
+                    else sr = mostRecentGame.SkillRating;
+                }
+                else if (validSr)
+                {
+                    TierIcon.Source = Config.GetImageForSkillRating(sr);
+                    SkillRatingChange.Text = (sr - mostRecentGame.SkillRating).ToString("(+#);(-#);(+0)");
+                    SkillRatingChange.Visibility = Visibility.Visible;
+                }
+                else return;
+
                 GameOutcome.Visibility = Visibility.Visible;
-                SkillRatingChange.Text = (sr - mostRecentGame.SkillRating).ToString("(+#);(-#);(+0)");
 
                 if (sr > mostRecentGame.SkillRating)
                 {
@@ -378,6 +410,7 @@ namespace OWTracker
         private void Score_TextChanged(object sender, TextChangedEventArgs e)
         {
             EstimateRounds();
+            UpdateGameResultText();
         }
 
         private void EstimateRounds()

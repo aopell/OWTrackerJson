@@ -48,6 +48,14 @@ namespace OWTracker
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (!Config.LoggedInUser.EditPermissions)
+            {
+                AccountSettingsBox.IsEnabled = false;
+                ImportGamesButton.IsEnabled = false;
+                BattleTag.IsEnabled = false;
+                Discriminator.IsEnabled = false;
+            }
+
             RecentHours.Text = SettingsManager.GetSetting<byte?>("recentHours").Value?.ToString() ?? "12";
             RecentRefresh.IsChecked = SettingsManager.GetBooleanSetting("recentRefresh") ?? true;
             UpdateOnStartup.IsChecked = SettingsManager.GetBooleanSetting("updateOnStartup") ?? true;
@@ -67,7 +75,7 @@ namespace OWTracker
         private async void ImportGames_Click(object sender, RoutedEventArgs e)
         {
             Config.SetBusyStatus("Importing games");
-            var fileTypeDialog = new TextBoxDialog("Would you like to import games from a JSON file or enter data manually?", "FROM FILE", "MANUAL ENTRY", DialogType.NoTextBox);
+            var fileTypeDialog = new TextBoxDialog("Would you like to import games from a JSON file or enter data manually?", "FROM FILE", "MANUAL ENTRY", DialogType.NoControl);
             fileTypeDialog.ShowDialog();
             if (fileTypeDialog.Result != null)
             {
@@ -186,19 +194,6 @@ namespace OWTracker
         private async void SaveSettings_Click(object sender, RoutedEventArgs e)
         {
             Config.SetBusyStatus("Saving settings");
-            // Profile Settings
-            if (BattleTag.Text.Length >= 3 && ushort.TryParse(Discriminator.Text, out ushort d))
-            {
-                await Config.LoggedInUser.UpdateBattleTag($"{BattleTag.Text}-{d:0000}");
-            }
-            else if (BattleTag.Text == "" && Discriminator.Text == "")
-            {
-                await Config.LoggedInUser.UpdateBattleTag(null);
-            }
-            else
-            {
-                MessageBox.Show("BattleTag wasn't in the correct format. Must be at least 3 characters. Discriminator must be a valid number.");
-            }
 
             // General Settings
             SettingsManager.AddSetting("recentHours", RecentHours.Text);
@@ -206,43 +201,60 @@ namespace OWTracker
             SettingsManager.AddSetting("updateOnStartup", UpdateOnStartup.IsChecked);
             SettingsManager.AddSetting("updatePeriodically", UpdatePeriodically.IsChecked);
 
-            // Account Settings
-
-            var loginSetting = SettingsManager.GetSetting<(string username, string password)>("rememberLogin");
-            var value = loginSetting.Success ? loginSetting.Value : (username: "", password: "");
-
-            value.username = RememberUsername.IsChecked == true ? Config.LoggedInUser.Username : "";
-
-            if (SkipLogin.IsChecked == true && string.IsNullOrEmpty(value.password))
+            if (Config.LoggedInUser.EditPermissions)
             {
-                var dialog = new TextBoxDialog("Please enter password for verification. Please note this will store your password in plaintext in order to keep you logged in.", "CONFIRM", "CANCEL", DialogType.PasswordEntry);
-                while (true)
+                // Profile Settings
+                if (BattleTag.Text.Length >= 3 && ushort.TryParse(Discriminator.Text, out ushort d))
                 {
-                    dialog.ShowDialog();
-                    if (dialog.Result != null)
-                    {
-                        try
-                        {
-                            Config.DataSource.Login(Config.LoggedInUser.Username, dialog.Result);
-                            value.username = Config.LoggedInUser.Username;
-                            value.password = SkipLogin.IsChecked == true ? dialog.Result : "";
-                            break;
-                        }
-                        catch { }
-
-                    }
-                    else
-                    {
-                        SkipLogin.IsChecked = false;
-                    }
-
-                    dialog = new TextBoxDialog("Incorrect password, try again.", "CONFIRM", "CANCEL", DialogType.PasswordEntry, Colors.Red);
+                    await Config.LoggedInUser.UpdateBattleTag($"{BattleTag.Text}-{d:0000}");
                 }
-            }
-            else if (SkipLogin.IsChecked == false && !string.IsNullOrEmpty(value.password))
-                value.password = "";
+                else if (BattleTag.Text == "" && Discriminator.Text == "")
+                {
+                    await Config.LoggedInUser.UpdateBattleTag(null);
+                }
+                else
+                {
+                    MessageBox.Show("BattleTag wasn't in the correct format. Must be at least 3 characters. Discriminator must be a valid number.");
+                }
 
-            SettingsManager.AddSetting("rememberLogin", value);
+                // Account Settings
+
+                var loginSetting = SettingsManager.GetSetting<(string username, string password)>("rememberLogin");
+                var value = loginSetting.Success ? loginSetting.Value : (username: "", password: "");
+
+                value.username = RememberUsername.IsChecked == true ? Config.LoggedInUser.Username : "";
+
+                if (SkipLogin.IsChecked == true && string.IsNullOrEmpty(value.password))
+                {
+                    var dialog = new TextBoxDialog("Please enter password for verification. Please note this will store your password in plaintext in order to keep you logged in.", "CONFIRM", "CANCEL", DialogType.PasswordEntry);
+                    while (true)
+                    {
+                        dialog.ShowDialog();
+                        if (dialog.Result != null)
+                        {
+                            try
+                            {
+                                Config.DataSource.Login(Config.LoggedInUser.Username, dialog.Result);
+                                value.username = Config.LoggedInUser.Username;
+                                value.password = SkipLogin.IsChecked == true ? dialog.Result : "";
+                                break;
+                            }
+                            catch { }
+
+                        }
+                        else
+                        {
+                            SkipLogin.IsChecked = false;
+                        }
+
+                        dialog = new TextBoxDialog("Incorrect password, try again.", "CONFIRM", "CANCEL", DialogType.PasswordEntry, Colors.Red);
+                    }
+                }
+                else if (SkipLogin.IsChecked == false && !string.IsNullOrEmpty(value.password))
+                    value.password = "";
+
+                SettingsManager.AddSetting("rememberLogin", value);
+            }
 
             SettingsManager.SaveSettings();
             await Config.Refresh();

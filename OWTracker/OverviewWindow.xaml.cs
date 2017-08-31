@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -7,8 +8,10 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using OWTracker.Data;
@@ -31,25 +34,28 @@ namespace OWTracker
         private bool exitEventAttached = false;
         private bool logout = false;
         private bool foundUpdates = false;
+        private DispatcherTimer timer;
+
+        private Dictionary<FrameworkElement, bool> visibleButtons = new Dictionary<FrameworkElement, bool>();
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (updateCheckCounter++ % 5 == 0 && Config.LoggedInUser != null)
+            if (overwatchProcess == null && Config.LoggedInUser != null && Process.GetProcessesByName("Overwatch").Any())
             {
-                if (Process.GetProcessesByName("Overwatch").Any())
-                {
-                    overwatchProcess = overwatchProcess ?? Process.GetProcessesByName("Overwatch").FirstOrDefault();
+                Config.Settings.UpdateOnlineProfiles.IsEnabled = false;
+                overwatchProcess = overwatchProcess ?? Process.GetProcessesByName("Overwatch").FirstOrDefault();
 
-                    if (overwatchProcess != null && !exitEventAttached)
-                    {
-                        overwatchProcess.Exited += OverwatchProcess_Exited;
-                        exitEventAttached = true;
-                    }
-                }
-                else if (Config.LoggedInUser.BattleTag != null)
+                if (overwatchProcess != null && !exitEventAttached)
                 {
-                    UpdateOnlineProfiles();
+                    Config.SetFinishedStatus("Overwatch application detected");
+                    overwatchProcess.EnableRaisingEvents = true;
+                    overwatchProcess.Exited += OverwatchProcess_Exited;
+                    exitEventAttached = true;
                 }
+            }
+            if (updateCheckCounter % 30 == 0 && overwatchProcess == null && Config.LoggedInUser.BattleTag != null)
+            {
+                UpdateOnlineProfiles();
             }
             if (updateCheckCounter % 60 == 0 && !foundUpdates && SettingsManager.GetBooleanSetting("updatePeriodically") == true)
             {
@@ -101,15 +107,28 @@ namespace OWTracker
 
         private async void OverwatchProcess_Exited(object sender, EventArgs e)
         {
-            Config.SetFinishedStatus("Overwatch application closed");
-            await Task.Delay(300000);
-            UpdateOnlineProfiles();
-            overwatchProcess = null;
-            exitEventAttached = false;
+            await Dispatcher.Invoke(
+            async () =>
+            {
+                Config.SetFinishedStatus("Overwatch application closed");
+                Config.Settings.UpdateOnlineProfiles.IsEnabled = true;
+                await Task.Delay(TimeSpan.FromMinutes(5));
+                Config.SetBusyStatus("Updating online profiles");
+                UpdateOnlineProfiles();
+                Config.SetFinishedStatus("Online profiles updated");
+                overwatchProcess = null;
+                exitEventAttached = false;
+            });
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            visibleButtons.Add(LogOutButton, true);
+            visibleButtons.Add(RefreshButton, true);
+            visibleButtons.Add(AddGameButton, true);
+            visibleButtons.Add(InfoButton, false);
+            visibleButtons.Add(SkillRatingDecayButton, true);
+
             Version v = Assembly.GetExecutingAssembly().GetName().Version;
             Title = $"Overwatch Competitive Game Tracker v{v.Major}.{v.Minor}{(v.Build != 0 ? $".{v.Build}" : "")}";
 
@@ -124,16 +143,25 @@ namespace OWTracker
             Config.Settings = new UserSettings();
             SettingsTab.Content = Config.Settings;
 
+            if (!Config.LoggedInUser.EditPermissions) visibleButtons[AddGameButton] = false;
+
             Config.SetBusyStatus("Loading games");
 
-            var timer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(1) };
+            timer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(1) };
             timer.Tick += Timer_Tick;
+            Timer_Tick(timer, new EventArgs());
             timer.Start();
 
-            await Config.Refresh();
-
-            if (!Config.LoggedInUser.EditPermissions) AddGameButton.Visibility = Visibility.Hidden;
-            Config.SetFinishedStatus("Ready");
+            await Task.Run(
+            () =>
+            {
+                Dispatcher.Invoke(
+                async () =>
+                {
+                    await Config.Refresh();
+                    Config.SetFinishedStatus("Ready");
+                });
+            });
         }
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
@@ -154,9 +182,27 @@ namespace OWTracker
                 () =>
                 {
                     if (Config.LoggedInUser.EditPermissions && Config.LoggedInUser.MostRecentGame != null && Config.LoggedInUser.MostRecentGame.SkillRating > 3000)
-                        SkillRatingDecayButton.Visibility = Visibility.Visible;
+                        visibleButtons[SkillRatingDecayButton] = true;
                     else
-                        SkillRatingDecayButton.Visibility = Visibility.Hidden;
+                        visibleButtons[SkillRatingDecayButton] = false;
+
+                    int marginOffset = 10;
+                    foreach (var kvp in visibleButtons)
+                    {
+                        var button = kvp.Key;
+                        if (kvp.Value)
+                        {
+                            button.Visibility = Visibility.Visible;
+                            button.Margin = new Thickness(button.Margin.Left, button.Margin.Top, marginOffset, button.Margin.Bottom);
+                            marginOffset += (int)button.Width;
+                        }
+                        else
+                        {
+                            button.Visibility = Visibility.Hidden;
+                        }
+                    }
+
+                    StatusText.Margin = new Thickness(StatusText.Margin.Left, StatusText.Margin.Top, marginOffset + 10, StatusText.Margin.Bottom);
                 });
             });
         }
@@ -171,6 +217,7 @@ namespace OWTracker
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
             Config.LoggedInUser = null;
+            timer?.Stop();
             new MainWindow { WindowStartupLocation = WindowStartupLocation.CenterScreen, FirstShown = false }.Show();
             logout = true;
             Close();
@@ -184,12 +231,29 @@ namespace OWTracker
 
         private async void SkillRatingDecayButton_Click(object sender, RoutedEventArgs e)
         {
+            const short skillRatingDecayAmount = 25;
+            const short minSkillRatingDecayRank = 3000;
+
             Game game = Config.LoggedInUser.MostRecentGame;
             if (game == null) return;
-            if (MessageBox.Show($"This will lower your skill rating to {(game.SkillRating - 50 < 3000 ? 3000 : game.SkillRating - 50)}.", "Apply SR Decay?", MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK)
+
+            var dialog = new TextBoxDialog("Please enter your current rank to apply skill rating decay", "Confirm Rank", "Cancel", DialogType.TextEntry);
+            dialog.ShowDialog();
+            string result = dialog.Result;
+            if (result == null) return;
+            short sr;
+            while (!short.TryParse(result, out sr) || sr != minSkillRatingDecayRank && (sr < minSkillRatingDecayRank || sr > game.SkillRating || (game.SkillRating - sr) % 25 != 0))
+            {
+                dialog = new TextBoxDialog($"Invalid skill rating amount. Decay can only exist in increments of {skillRatingDecayAmount} SR except for when decay reaches {minSkillRatingDecayRank}. Please enter a valid new skill rating.", "Confirm Rank", "Cancel", DialogType.TextEntry, System.Windows.Media.Colors.Red);
+                dialog.ShowDialog();
+                result = dialog.Result;
+                if (result == null) return;
+            }
+
+            if (MessageBox.Show($"This will lower your skill rating to {sr}.", "Apply SR Decay?", MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK)
             {
                 Config.SetBusyStatus("Applying SR decay");
-                await Config.LoggedInUser.AddGame(new Game(Config.LoggedInUser.UserId, game.Season, DateTimeOffset.Now, game.SkillRating - 50 < 3000 ? (short)3000 : (short)(game.SkillRating - 50), false, null, Application.Current.Resources["SRDecayString"] as string, null, null, null, null, null, null));
+                await Config.LoggedInUser.AddGame(new Game(Config.LoggedInUser.UserId, game.Season, DateTimeOffset.Now, sr, false, null, Application.Current.Resources["SRDecayString"] as string, null, null, null, null, null, null));
                 await Config.Refresh();
                 Config.SetFinishedStatus("SR decay applied");
             }
@@ -200,6 +264,26 @@ namespace OWTracker
             if (!logout && Config.LoggedInUser.BattleTag != null)
                 UpdateOnlineProfiles();
             logout = false;
+        }
+
+        private void ViewGames_Unselect(object sender, RoutedEventArgs e)
+        {
+            Config.ViewGames.DisplayItems(20);
+        }
+
+        private void InfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            var colors = new[]
+            {
+                Colors.Red,
+                Colors.White,
+                System.Windows.Media.Color.FromArgb(255, 190, 130, 49),
+                Colors.Yellow
+            };
+
+            Random random = new Random();
+
+            InfoButton.Foreground = new SolidColorBrush(colors[random.Next(colors.Length)]);
         }
     }
 

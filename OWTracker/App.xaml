@@ -43,12 +43,13 @@
             <sys:String>Temple of Anubis</sys:String>
             <sys:String>Volskaya Industries</sys:String>
             <sys:String>Dorado</sys:String>
+            <sys:String>Junkertown</sys:String>
             <sys:String>Route 66</sys:String>
             <sys:String>Watchpoint: Gibraltar</sys:String>
+            <sys:String>Eichenwalde</sys:String>
             <sys:String>Hollywood</sys:String>
             <sys:String>King's Row</sys:String>
             <sys:String>Numbani</sys:String>
-            <sys:String>Eichenwalde</sys:String>
             <sys:String>Ilios</sys:String>
             <sys:String>Lijiang Tower</sys:String>
             <sys:String>Nepal</sys:String>
@@ -62,14 +63,15 @@
         </x:Array>
         <x:Array x:Key="EscortMaps" Type="{x:Type sys:String}">
             <sys:String>Dorado</sys:String>
+            <sys:String>Junkertown</sys:String>
             <sys:String>Route 66</sys:String>
             <sys:String>Watchpoint: Gibraltar</sys:String>
         </x:Array>
         <x:Array x:Key="HybridMaps" Type="{x:Type sys:String}">
+            <sys:String>Eichenwalde</sys:String>
             <sys:String>Hollywood</sys:String>
             <sys:String>King's Row</sys:String>
             <sys:String>Numbani</sys:String>
-            <sys:String>Eichenwalde</sys:String>
         </x:Array>
         <x:Array x:Key="ControlMaps" Type="{x:Type sys:String}">
             <sys:String>Ilios</sys:String>

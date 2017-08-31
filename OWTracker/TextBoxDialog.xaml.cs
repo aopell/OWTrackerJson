@@ -27,7 +27,7 @@ namespace OWTracker
 
         public string Result { get; private set; }
 
-        public TextBoxDialog(string message, string primaryButtonText, string secondaryButtonText, DialogType type, Color textColor = default(Color))
+        public TextBoxDialog(string message, string primaryButtonText, string secondaryButtonText, DialogType type, Color textColor = default(Color), IEnumerable<string> comboBoxOptions = null)
         {
             InitializeComponent();
 
@@ -36,6 +36,12 @@ namespace OWTracker
             PrimaryButtonText = primaryButtonText;
             Type = type;
             TextColor = textColor;
+
+            if (type == DialogType.ComboBoxEntry)
+            {
+                ComboBox.Text = "Select one";
+                ComboBox.ItemsSource = comboBoxOptions;
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -49,13 +55,20 @@ namespace OWTracker
             {
                 case DialogType.TextEntry:
                     PasswordTextBox.Visibility = Visibility.Hidden;
+                    ComboBox.Visibility = Visibility.Hidden;
                     break;
                 case DialogType.PasswordEntry:
                     RegularTextBox.Visibility = Visibility.Hidden;
+                    ComboBox.Visibility = Visibility.Hidden;
                     break;
-                case DialogType.NoTextBox:
+                case DialogType.ComboBoxEntry:
+                    RegularTextBox.Visibility = Visibility.Hidden;
+                    PasswordTextBox.Visibility = Visibility.Hidden;
+                    break;
+                case DialogType.NoControl:
                     PasswordTextBox.Visibility = Visibility.Hidden;
                     RegularTextBox.Visibility = Visibility.Hidden;
+                    ComboBox.Visibility = Visibility.Hidden;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -72,7 +85,10 @@ namespace OWTracker
                 case DialogType.PasswordEntry:
                     Result = PasswordTextBox.Password;
                     break;
-                case DialogType.NoTextBox:
+                case DialogType.ComboBoxEntry:
+                    Result = ComboBox.SelectedValue?.ToString();
+                    break;
+                case DialogType.NoControl:
                     Result = PrimaryButtonText;
                     break;
                 default:
@@ -93,6 +109,7 @@ namespace OWTracker
     {
         TextEntry,
         PasswordEntry,
-        NoTextBox
+        ComboBoxEntry,
+        NoControl
     }
 }
